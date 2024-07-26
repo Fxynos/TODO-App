@@ -1,8 +1,8 @@
-package com.dn.todo.data
+package com.dn.todo.data.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
 
-class NoteDto(
+data class TaskDto(
     @field:JsonInclude(JsonInclude.Include.NON_NULL)
     val id: Long?,
     val title: String,

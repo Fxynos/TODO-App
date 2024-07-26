@@ -1,8 +1,7 @@
 package com.dn.todo.presentation
 
-import com.dn.todo.data.H2NoteRepository
-import com.dn.todo.domain.InMemoryNoteRepository
-import com.dn.todo.domain.NoteRepository
+import com.dn.todo.data.repository.InMemoryTaskRepository
+import com.dn.todo.domain.TaskRepository
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.context.annotation.Bean
@@ -17,5 +16,5 @@ abstract class App {
     }
 
     @Bean
-    abstract fun bindNoteRepository(repository: InMemoryNoteRepository): NoteRepository // TODO implement H2 DB
+    abstract fun bindNoteRepository(repository: InMemoryTaskRepository): TaskRepository // TODO implement H2 DB
 }

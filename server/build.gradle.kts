@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:2.7.3")
+    implementation("org.springframework.boot:spring-boot-starter-validation:2.7.3")
 }
 
 kotlin {
