@@ -15,7 +15,7 @@ class H2NoteRepository: NoteRepository {
         TODO("Not yet implemented")
     }
 
-    override fun insert(note: Note): Int {
+    override fun insert(note: Note): Long {
         TODO("Not yet implemented")
     }
 
