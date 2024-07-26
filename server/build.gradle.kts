@@ -13,6 +13,7 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:2.7.3")
     implementation("org.springframework.boot:spring-boot-starter-validation:2.7.3")
+    runtimeOnly("com.h2database:h2:2.3.230")
 }
 
 kotlin {

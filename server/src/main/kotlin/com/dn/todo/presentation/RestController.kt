@@ -79,5 +79,8 @@ class RestController(@Autowired private val service: TaskService) {
     }
 
     private fun isValid(task: TaskDto): Boolean =
-        task.id == null && task.title.isNotBlank() && task.description?.isNotBlank() ?: true
+        task.id == null &&
+        task.title.isNotBlank() &&
+        task.title.length <= 40 &&
+        task.description?.let { it.isNotBlank() && it.length <= 1000 } ?: true
 }

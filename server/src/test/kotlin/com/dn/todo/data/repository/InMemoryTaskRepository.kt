@@ -2,14 +2,12 @@ package com.dn.todo.data.repository
 
 import com.dn.todo.domain.Task
 import com.dn.todo.domain.TaskRepository
-import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Repository
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 
-@Primary // TODO implement H2 DB
 @Repository
-class InMemoryTaskRepository: TaskRepository { // temp mock repo impl
+class InMemoryTaskRepository: TaskRepository {
     companion object {
         private var idCounter = AtomicLong(1L)
     }
