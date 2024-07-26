@@ -49,6 +49,16 @@ class RestController(@Autowired private val service: TaskService) {
         return ResponseEntity(HttpStatus.OK)
     }
 
+    /**
+     * Accepts task:
+     * ```json
+     * {
+     *     "title": "Make a coffee",
+     *     "description": "First of all, buy it",
+     *     "completed": false
+     * }
+     * ```
+     */
     @PutMapping("/tasks/{id}")
     fun updateTask(
         @PathVariable id: Long,
