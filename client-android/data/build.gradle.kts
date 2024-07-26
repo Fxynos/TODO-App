@@ -1,20 +1,17 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
 
 android {
-    namespace = "com.dn.todo"
+    namespace = "com.dn.todo.data"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.dn.todo"
         minSdk = 27
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -37,6 +34,7 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":data"))
-    implementation(libs.paging.compose)
+    implementation(libs.paging.runtime)
+    implementation(libs.retrofit.retrofit)
+    implementation(libs.retrofit.converter.gson)
 }
