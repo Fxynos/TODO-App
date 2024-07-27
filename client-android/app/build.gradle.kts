@@ -1,10 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
-    namespace = "com.dn.todo"
+    namespace = "com.dn.todo.ui"
     compileSdk = 34
 
     defaultConfig {
@@ -38,5 +40,28 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
+
+    implementation(libs.material)
+
+    /* Hilt */
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
+    kapt(libs.hilt.android.compiler)
+
+    /* Lifecycle */
+    implementation(libs.androidx.lifecycle.runtimeCompose)
+    implementation(libs.androidx.lifecycle.viewModelCompose)
+
+    /* Compose */
+    implementation(libs.androidx.activity.compose)
+
+    implementation(platform(libs.androidx.compose.bom))
+
+    implementation(libs.androidx.compose.ui.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3.android)
+    implementation(libs.androidx.navigation.compose)
+
     implementation(libs.paging.compose)
 }
