@@ -19,6 +19,18 @@ import java.util.concurrent.TimeUnit
 private const val BASE_URL = "http://192.168.0.10:8080/" // TODO move to build config
 private const val TAG = "RemoteTaskRepo"
 
+private fun <T> Response<T>.assertSuccess() {
+    if (!isSuccessful)
+        throw TaskApiException(this)
+}
+
+private fun <T> Response<T>.getOrThrow() =
+    if (isSuccessful)
+        body()!!
+    else throw TaskApiException(this)
+
+private fun TaskDto.toEntity() = Task(id!!, title, description, isCompleted!!)
+
 class RemoteTaskRepository(timeoutMs: Long): TaskRepository {
 
     private val api: TaskApiScheme = Retrofit.Builder()
@@ -42,7 +54,10 @@ class RemoteTaskRepository(timeoutMs: Long): TaskRepository {
         .create(TaskApiScheme::class.java)
 
     private fun getAll(limit: Int, fromId: Long?): List<Task> =
-        api.getAll(limit, fromId).execute().getOrThrow()
+        api.getAll(limit, fromId)
+            .execute()
+            .getOrThrow()
+            .map(TaskDto::toEntity)
 
     /**
      * @return flow that SHOULD be [Flow.cachedIn] in corresponding [CoroutineScope]
@@ -57,29 +72,31 @@ class RemoteTaskRepository(timeoutMs: Long): TaskRepository {
         }
     ).flow
 
-    override fun create(task: Task) =
+    override fun get(id: Long): Task =
+        api.get(id)
+            .execute()
+            .getOrThrow()
+            .toEntity()
+
+    override fun create(task: Task): Task =
         api.create(TaskDto().apply {
             title = task.title
             description = task.description
-        }).execute().assertSuccess()
+        }).execute()
+            .getOrThrow()
+            .toEntity()
 
     override fun update(task: Task) =
         api.update(TaskDto().apply {
             title = task.title
             description = task.description
             isCompleted = task.isCompleted
-        }, task.id).execute().assertSuccess()
+        }, task.id)
+            .execute()
+            .assertSuccess()
 
     override fun delete(id: Long) =
-        api.delete(id).execute().assertSuccess()
-
-    private fun <T> Response<T>.assertSuccess() {
-        if (!isSuccessful)
-            throw TaskApiException(this)
-    }
-
-    private fun <T> Response<T>.getOrThrow() =
-        if (isSuccessful)
-            body()!!
-        else throw TaskApiException(this)
+        api.delete(id)
+            .execute()
+            .assertSuccess()
 }

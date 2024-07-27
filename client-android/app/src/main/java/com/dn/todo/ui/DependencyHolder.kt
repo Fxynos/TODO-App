@@ -8,6 +8,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -18,5 +20,5 @@ object DependencyHolder {
 
     @Provides
     @ViewModelScoped
-    fun provideTaskRepository() = RemoteTaskRepository(timeoutMs = 1000L)
+    fun provideTaskRepository(): TaskRepository = RemoteTaskRepository(timeoutMs = 5000L)
 }

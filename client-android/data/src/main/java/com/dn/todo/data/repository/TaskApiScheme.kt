@@ -11,24 +11,28 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 internal interface TaskApiScheme {
+
+    @GET("tasks/{id}")
+    fun get(@Path("id") id: Long): Call<TaskDto>
+
     @GET("tasks")
     fun getAll(
         @Query("limit") limit: Int,
         @Query("from_id") fromId: Long?
-    ): Call<List<Task>>
+    ): Call<List<TaskDto>>
 
     /**
      * @param task MUST have its [Task.id] and [Task.isCompleted] equal `null`
      */
     @POST("tasks")
-    fun create(@Body task: TaskDto): Call<Nothing>
+    fun create(@Body task: TaskDto): Call<TaskDto>
 
     @PUT("tasks/{id}")
     fun update(
         @Body task: TaskDto,
         @Path("id") id: Long
-    ): Call<Nothing>
+    ): Call<Unit>
 
     @DELETE("tasks/{id}")
-    fun delete(@Path("id") id: Long): Call<Nothing>
+    fun delete(@Path("id") id: Long): Call<Unit>
 }

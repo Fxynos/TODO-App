@@ -17,6 +17,12 @@ import javax.validation.Valid
 @RestController
 class RestController(@Autowired private val service: TaskService) {
 
+    @GetMapping("/tasks/{id}")
+    fun getTask(@PathVariable("id") id: Long): ResponseEntity<TaskDto> =
+        ResponseEntity.ok(
+            service.getTask(id)
+        )
+
     @GetMapping("/tasks")
     fun getTasks(
         @RequestParam(defaultValue = "10") limit: Int,
@@ -37,16 +43,15 @@ class RestController(@Autowired private val service: TaskService) {
      *  "title": "Custom name",
      *  "description": "Custom optional description"
      * }
-     * ```
      */
     @PostMapping("/tasks")
-    fun createTask(@Valid @RequestBody task: TaskDto): ResponseEntity<Nothing> {
+    fun createTask(@Valid @RequestBody task: TaskDto): ResponseEntity<TaskDto> {
         if (task.isCompleted != null || task.id != null || !isValid(task))
             return ResponseEntity(HttpStatus.BAD_REQUEST)
 
-        service.createTask(task)
-
-        return ResponseEntity(HttpStatus.OK)
+        return ResponseEntity.ok(
+            task.copy(id = service.createTask(task))
+        )
     }
 
     /**
@@ -55,7 +60,7 @@ class RestController(@Autowired private val service: TaskService) {
      * {
      *     "title": "Make a coffee",
      *     "description": "First of all, buy it",
-     *     "completed": false
+     *     "is_completed": false
      * }
      * ```
      */
@@ -64,7 +69,7 @@ class RestController(@Autowired private val service: TaskService) {
         @PathVariable id: Long,
         @Valid @RequestBody task: TaskDto
     ): ResponseEntity<Nothing> {
-        if (!isValid(task))
+        if (!isValid(task) || task.isCompleted == null)
             return ResponseEntity(HttpStatus.BAD_REQUEST)
 
         service.updateTask(task.copy(id = id))
