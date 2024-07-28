@@ -2,6 +2,7 @@ package com.dn.todo.data.repository
 
 import com.dn.todo.domain.Task
 import com.dn.todo.domain.TaskRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Repository
 import java.sql.DriverManager
@@ -11,24 +12,12 @@ import java.util.LinkedList
 
 @Primary
 @Repository
-class H2TaskRepository: TaskRepository {
+class H2TaskRepository(@Value("\${db.h2.address}") address: String): TaskRepository {
     companion object {
         init { Class.forName("org.h2.Driver") }
     }
 
-    // TODO pass credentials and path with @Value
-    private val connection = DriverManager.getConnection("jdbc:h2:./todo", "root", "")
-
-    init { // TODO liquibase migration
-        connection.createStatement().execute("""
-            create table if not exists task (
-                id int auto_increment primary key,
-                title varchar(40) not null,
-                description varchar(1000),
-                completed bool not null default false
-            )
-        """.trimIndent())
-    }
+    private val connection = DriverManager.getConnection(address) // embedded db doesn't require credentials
 
     override fun get(id: Long): Task =
         connection.prepareStatement("select * from task where id = ?;").run {
