@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -16,7 +19,12 @@ android {
 
     buildTypes {
         debug {
-            val baseUrl = properties["server.base.url"] as String
+            val baseUrl = Properties().apply {
+                file("../../dev.properties")
+                    .inputStream()
+                    .use { load(it) }
+            }["server.base.url"]
+
             buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
         }
         release {

@@ -33,6 +33,8 @@ private fun TaskDto.toEntity() = Task(id!!, title, description, isCompleted!!)
 
 class RemoteTaskRepository(timeoutMs: Long): TaskRepository {
 
+    init { Log.d(TAG, "Base URL: ${BuildConfig.BASE_URL}") }
+
     private val api: TaskApiScheme = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
         .baseUrl(BuildConfig.BASE_URL.run { if (endsWith("/")) this else "$this/" })

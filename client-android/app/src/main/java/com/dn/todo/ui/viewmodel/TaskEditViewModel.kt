@@ -41,7 +41,7 @@ class TaskEditViewModel @AssistedInject constructor(
     }
 
     fun setTitle(title: String) =
-        _uiState.update { it.copy(title = title.trimToSize(20)) }
+        _uiState.update { it.copy(title = title.trimToSize(30)) }
     fun setDescription(description: String) =
         _uiState.update { it.copy(description = description.trimToSize(1000)) }
     fun setCompleted(isCompleted: Boolean) =
