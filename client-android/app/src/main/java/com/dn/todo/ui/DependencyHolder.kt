@@ -20,5 +20,5 @@ object DependencyHolder {
 
     @Provides
     @ViewModelScoped
-    fun provideTaskRepository(): TaskRepository = RemoteTaskRepository(timeoutMs = 5000L)
+    fun provideTaskRepository(): TaskRepository = RemoteTaskRepository(timeoutMs = 1000L)
 }
