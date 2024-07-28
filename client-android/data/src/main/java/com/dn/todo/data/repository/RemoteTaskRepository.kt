@@ -5,6 +5,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.dn.todo.data.BuildConfig
 import com.dn.todo.data.paging.TaskPagingSource
 import com.dn.todo.domain.Task
 import com.dn.todo.domain.TaskRepository
@@ -16,7 +17,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-private const val BASE_URL = "http://192.168.0.10:8080/" // TODO move to build config
 private const val TAG = "RemoteTaskRepo"
 
 private fun <T> Response<T>.assertSuccess() {
@@ -35,7 +35,7 @@ class RemoteTaskRepository(timeoutMs: Long): TaskRepository {
 
     private val api: TaskApiScheme = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(BASE_URL)
+        .baseUrl(BuildConfig.BASE_URL.run { if (endsWith("/")) this else "$this/" })
         .client(
             OkHttpClient.Builder()
                 .addInterceptor { chain ->
