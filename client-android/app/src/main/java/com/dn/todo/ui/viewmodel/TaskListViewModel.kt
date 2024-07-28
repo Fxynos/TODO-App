@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,7 +32,7 @@ class TaskListViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
     fun markTask(taskId: Long, isCompleted: Boolean) {
-        viewModelScope.launch {
+        catchConnectionError {
             withContext(Dispatchers.IO) {
                 taskManager.setTaskCompleted(taskId, isCompleted)
             }
@@ -46,19 +47,16 @@ class TaskListViewModel @Inject constructor(
     }
 
     fun createTask() {
-        viewModelScope.launch {
+        catchConnectionError {
             val task = withContext(Dispatchers.IO) {
-                taskManager.createTask(
-                    context.getString(R.string.task_title_default)
-                    , null
-                )
+                taskManager.createTask(context.getString(R.string.task_title_default), null)
             }
             _event.emit(DataDrivenEvent.NavigateToTaskEdit(task.id))
         }
     }
 
     fun deleteTask(taskId: Long) {
-        viewModelScope.launch {
+        catchConnectionError {
             withContext(Dispatchers.IO) {
                 taskManager.deleteTask(taskId)
             }
@@ -66,8 +64,19 @@ class TaskListViewModel @Inject constructor(
         }
     }
 
+    private inline fun catchConnectionError(crossinline block: suspend () -> Unit) {
+        viewModelScope.launch {
+            try {
+                block()
+            } catch (e: IOException) {
+                _event.emit(DataDrivenEvent.NotifyNoConnection)
+            }
+        }
+    }
+
     sealed interface DataDrivenEvent {
         data object RefreshTaskList: DataDrivenEvent
         data class NavigateToTaskEdit(val taskId: Long): DataDrivenEvent
+        data object NotifyNoConnection: DataDrivenEvent
     }
 }

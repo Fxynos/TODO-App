@@ -5,6 +5,7 @@ import androidx.paging.PagingState
 import com.dn.todo.domain.Task
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.IOException
 
 internal class TaskPagingSource(
     private val fetch: (pageSize: Int, key: Long?) -> Pair<List<Task>, Long?>
@@ -13,7 +14,11 @@ internal class TaskPagingSource(
 
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Task> =
         withContext(Dispatchers.IO) {
-            val (items, nextKey) = fetch(params.loadSize, params.key)
-            LoadResult.Page(items, null, nextKey)
+            try {
+                val (items, nextKey) = fetch(params.loadSize, params.key)
+                LoadResult.Page(items, null, nextKey)
+            } catch (e: IOException) {
+                LoadResult.Error(e)
+            }
         }
 }
