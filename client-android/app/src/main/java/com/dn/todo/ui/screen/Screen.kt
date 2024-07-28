@@ -1,6 +1,7 @@
 package com.dn.todo.ui.screen
 
 import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 
@@ -19,5 +20,7 @@ sealed class Screen(
         )
     ) {
         fun createRoute(taskId: Long) = "edit/$taskId"
+        fun getTaskId(backStack: NavBackStackEntry): Long =
+            backStack.arguments!!.getLong("taskId")
     }
 }

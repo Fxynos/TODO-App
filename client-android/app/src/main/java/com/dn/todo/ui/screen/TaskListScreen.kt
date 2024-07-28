@@ -80,7 +80,7 @@ fun TaskListScreen(
     // refresh when screen restarted
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_START)
+            if (event == Lifecycle.Event.ON_RESUME)
                 tasks.refresh()
         }
         lifecycleOwner.lifecycle.addObserver(observer)
