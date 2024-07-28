@@ -40,9 +40,12 @@ class TaskEditViewModel @AssistedInject constructor(
         }
     }
 
-    fun setTitle(title: String) = _uiState.update { it.copy(title = title) }
-    fun setDescription(description: String) = _uiState.update { it.copy(description = description) }
-    fun setCompleted(isCompleted: Boolean) = _uiState.update { it.copy(isCompleted = isCompleted) }
+    fun setTitle(title: String) =
+        _uiState.update { it.copy(title = title.trimToSize(20)) }
+    fun setDescription(description: String) =
+        _uiState.update { it.copy(description = description.trimToSize(1000)) }
+    fun setCompleted(isCompleted: Boolean) =
+        _uiState.update { it.copy(isCompleted = isCompleted) }
 
     fun saveTask() {
         if (!uiState.value.areInputsValid)
@@ -65,6 +68,8 @@ class TaskEditViewModel @AssistedInject constructor(
             _event.emit(DataDrivenEvent.NavigateBack)
         }
     }
+
+    private fun String.trimToSize(size: Int) = if (length > size) substring(0, size) else this
 
     sealed interface DataDrivenEvent {
         data object NavigateBack: DataDrivenEvent
