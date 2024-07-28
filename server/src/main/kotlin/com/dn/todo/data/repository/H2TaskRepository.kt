@@ -33,7 +33,7 @@ class H2TaskRepository: TaskRepository {
     override fun get(id: Long): Task =
         connection.prepareStatement("select * from task where id = ?;").run {
             setLong(1, id)
-            executeQuery().getTask()
+            executeQuery().also(ResultSet::next).getTask()
         }
 
     override fun getAll(limit: Int, fromId: Long?): List<Task> =

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service
 @Service
 class TaskService(@Autowired private val repository: TaskRepository) {
 
+    fun getTask(id: Long): TaskDto = repository.get(id).toDto()
+
     fun getTasksPage(limit: Int, fromId: Long?): List<TaskDto> = repository.getAll(limit, fromId).map(Task::toDto)
 
     fun createTask(note: TaskDto): Long = repository.insert(note.toEntity())
