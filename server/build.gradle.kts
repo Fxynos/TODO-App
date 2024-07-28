@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.util.*
 
 plugins {
@@ -28,9 +27,12 @@ kotlin {
     jvmToolchain(17)
 }
 
-val applicationProperties = Properties().apply {
-    file("src/main/resources/application.properties").inputStream().use { load(it) }
+tasks.bootJar {
+    archiveFileName = "server.jar"
 }
+
+val propertiesPath = "../dev.properties"
+val fileProperties = Properties().apply { file(propertiesPath).inputStream().use { load(it) } }
 
 liquibase {
     activities {
@@ -38,11 +40,17 @@ liquibase {
             arguments = mapOf(
                 "changelogFile" to "changelog.sql",
                 "url" to (
-                    properties["db.h2.address"] ?:
-                    applicationProperties["db.h2.address"] ?:
+                    properties["db.h2.address"] ?: // explicitly defined properties in terminal
+                    fileProperties["db.h2.address"] ?:
                     throw IllegalArgumentException("define db.h2.address property")
                 )
             )
         }
+    }
+}
+
+tasks.processResources {
+    from(propertiesPath).rename {
+        "application.properties"
     }
 }
