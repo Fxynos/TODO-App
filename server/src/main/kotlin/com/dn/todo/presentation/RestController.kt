@@ -50,7 +50,7 @@ class RestController(@Autowired private val service: TaskService) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
 
         return ResponseEntity.ok(
-            task.copy(id = service.createTask(task))
+            task.copy(id = service.createTask(task), isCompleted = false)
         )
     }
 

@@ -38,19 +38,21 @@ fun TaskCard(
     title: String,
     description: String?,
     isCompleted: Boolean,
-    onCompletionChange: (Boolean) -> Unit = {}
+    onCheckedChange: (Boolean) -> Unit = {},
+    onClick: () -> Unit = {}
 ) {
     Card(
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
+        ),
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Checkbox(checked = isCompleted, onCheckedChange = onCompletionChange)
+            Checkbox(checked = isCompleted, onCheckedChange = onCheckedChange)
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = title,

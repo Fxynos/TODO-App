@@ -11,16 +11,13 @@ sealed class Screen(
     data object TaskList: Screen("list")
 
     data object TaskEdit: Screen(
-        route = "edit/{taskId}?new={new}",
+        route = "edit/{taskId}",
         navArgs = listOf(
             navArgument("taskId") {
                 type = NavType.LongType
-            },
-            navArgument("new") {
-                type = NavType.BoolType
             }
         )
     ) {
-        fun createRoute(taskId: Long, isTaskNew: Boolean) = "edit/$taskId?new=$isTaskNew"
+        fun createRoute(taskId: Long) = "edit/$taskId"
     }
 }

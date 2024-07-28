@@ -13,14 +13,9 @@ fun TodoApp(navController: NavHostController = rememberNavController()) {
         startDestination = Screen.TaskList.route
     ) {
         composable(Screen.TaskList.route, Screen.TaskList.navArgs) {
-            TaskListScreen(
-                onCreateTask = { taskId ->
-                    navController.navigate(Screen.TaskEdit.createRoute(taskId, isTaskNew = true))
-                },
-                onEditTask = { taskId ->
-                    navController.navigate(Screen.TaskEdit.createRoute(taskId, isTaskNew = false))
-                }
-            )
+            TaskListScreen(onEditTask = { taskId ->
+                navController.navigate(Screen.TaskEdit.createRoute(taskId))
+            })
         }
         composable(Screen.TaskEdit.route, Screen.TaskEdit.navArgs) {
             TaskEditScreen(

@@ -1,5 +1,6 @@
 package com.dn.todo.ui.screen
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dn.todo.ui.viewmodel.TaskEditViewModel
@@ -10,5 +11,5 @@ fun TaskEditScreen(
     onTaskSaved: (taskId: Long) -> Unit,
     onTaskDeleted: (taskId: Long) -> Unit
 ) {
-    TODO()
+    Text(text = "Заглушка") // TODO
 }
