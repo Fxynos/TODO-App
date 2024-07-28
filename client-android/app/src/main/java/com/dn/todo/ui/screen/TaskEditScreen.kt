@@ -20,11 +20,13 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -36,6 +38,7 @@ import com.dn.todo.ui.R
 import com.dn.todo.ui.theme.AppTheme
 import com.dn.todo.ui.theme.AppTypography
 import com.dn.todo.ui.viewmodel.TaskEditViewModel
+import kotlinx.coroutines.launch
 
 @Preview(showBackground = true)
 @Composable
@@ -48,14 +51,19 @@ fun TaskEditUiPreview() {
 @Composable
 fun TaskEditScreen(
     viewModel: TaskEditViewModel,
+    snackbarState: SnackbarHostState,
     onBack: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
+    val scope = rememberCoroutineScope()
+    val noConnectionMessage = stringResource(R.string.no_connection)
 
     LaunchedEffect(Unit) {
         viewModel.event.collect {
             when (it) {
                 is TaskEditViewModel.DataDrivenEvent.NavigateBack -> onBack()
+                is TaskEditViewModel.DataDrivenEvent.NotifyNoConnection ->
+                    scope.launch { snackbarState.showSnackbar(noConnectionMessage) }
             }
         }
     }
@@ -148,7 +156,8 @@ fun TaskEditUi(
         /* Bottom bar */
 
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround

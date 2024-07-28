@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dn.todo.domain.Task
 import com.dn.todo.domain.TaskManager
+import com.dn.todo.ui.viewmodel.TaskListViewModel.DataDrivenEvent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
 
 @HiltViewModel(assistedFactory = TaskEditViewModel.Factory::class)
 class TaskEditViewModel @AssistedInject constructor(
@@ -34,7 +36,7 @@ class TaskEditViewModel @AssistedInject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
+        catchConnectionError {
             val task = withContext(Dispatchers.IO) { taskManager.getTask(taskId) }
             _uiState.emit(UiState(task.title, task.description ?: "", task.isCompleted))
         }
@@ -54,7 +56,8 @@ class TaskEditViewModel @AssistedInject constructor(
         val state = uiState.value
         val finalTitle = state.title.trim()
         val finalDescription = if (state.description.isBlank()) null else state.description.trim()
-        viewModelScope.launch {
+
+        catchConnectionError {
             withContext(Dispatchers.IO) {
                 taskManager.updateTask(Task(taskId, finalTitle, finalDescription, state.isCompleted))
             }
@@ -63,9 +66,19 @@ class TaskEditViewModel @AssistedInject constructor(
     }
 
     fun deleteTask() {
-        viewModelScope.launch {
+        catchConnectionError {
             withContext(Dispatchers.IO) { taskManager.deleteTask(taskId) }
             _event.emit(DataDrivenEvent.NavigateBack)
+        }
+    }
+
+    private inline fun catchConnectionError(crossinline block: suspend () -> Unit) {
+        viewModelScope.launch {
+            try {
+                block()
+            } catch (e: IOException) {
+                _event.emit(DataDrivenEvent.NotifyNoConnection)
+            }
         }
     }
 
@@ -73,6 +86,7 @@ class TaskEditViewModel @AssistedInject constructor(
 
     sealed interface DataDrivenEvent {
         data object NavigateBack: DataDrivenEvent
+        data object NotifyNoConnection: DataDrivenEvent
     }
 
     data class UiState(

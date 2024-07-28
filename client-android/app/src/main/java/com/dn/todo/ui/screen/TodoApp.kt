@@ -32,6 +32,7 @@ fun TodoApp(
                     hiltViewModel<TaskEditViewModel, TaskEditViewModel.Factory> {
                         factory -> factory.create(Screen.TaskEdit.getTaskId(backStack))
                     },
+                snackbarState = snackbarState,
                 onBack = navController::navigateUp
             )
         }
