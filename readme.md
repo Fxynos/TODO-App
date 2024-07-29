@@ -8,27 +8,50 @@ Client-server app that provides CRUD for notes.
 - **Server-side**: Spring Boot, Kotlin, H2 and Liquibase.
 - **Client-side**: Android SDK, Kotlin, Retrofit, Jetpack Compose, Paging and Hilt.
 
-## :package: Deploy
-First of all, you have to install JDK 17.
+## :wrench: Requirements
 
-**Build both client and server:**
-1. Define `server.base.url` in `dev.properties` (only Android subproject uses this property).
-2. Run composite build `./gradlew build`.
-3. Go to `/build` (here you can find server-app as `.jar` and Android as `.apk`).
+- Installed JDK 17 and set `JAVA_HOME` environment variable.
+- Installed Android SDK and set `ANDROID_HOME` environment variable.
 
-**Deploy only server:** 
-- Go to `server` folder and run `./gradlew bootRun --args="--server.address=192.168.0.10 --server.port=8080 --db.h2.address=jdbc:h2:./todo"` (replace arguments).
-- Or you can just build `.jar` by executing `./gradlew bootJar` (it will be located in `build/libs`).
+## :package: Build
 
-**Build only Android app:**
-- Go to `client-android` and run `./gradlew assembleDebug` (`.apk` locates in `app/build/outputs/apk/debug`)
+First of all, replace arguments in `dev.properties`:
+- `server.base.url` - server address accessible from client
+- `server.address`, `server.port` - server host
+- `db.h2.address` - URL to embedded H2 DB (file will be created if not exists)
 
-**Deploy server from `.jar`**:
-- `java -jar <server>.jar --server.address=<address> --server.port=<port> --db.h2.address=jdbc:h2:./<embedded-db>` (omit args if you wanna use default values from `dev.properties` defined at compile time).
+### Composite build
 
-**Clean Android project**:
-- I would recommend to execute `gradlew client-android:app:clean` each time you change `dev.properties`, cause' sometimes BuildConfig doesn't update base url.
+1. Run `./gradlew build`.
+2. Go to `/build` (here you can find server as `.jar` and Android app as `.apk`).
 
-**Migrations**:
-- Go to `server` folder and run `./gradlew update "-Pdb.h2.address=jdbc:h2:<path-to-embedded-db>"` to update db scheme.
-- Run `./gradlew dropAll "-Pdb.h2.address=jdbc:h2:<path>"` to reset db (omit argument to use value from top-level properties).
+- I would recommend to execute `./gradlew client-android:app:clean` each time you change base url, cause' sometimes BuildConfig doesn't update it.
+
+### Build server only
+
+1. Open `server` folder.
+2. Run `./gradlew bootJar` (JAR will be located in `/server/build/libs`).
+
+### Build client only
+
+1. Open `client-android` folder.
+2. Run `./gradlew assembleDebug` (APK locates in `/client-android/app/build/outputs/apk/debug`).
+
+## :rocket: Deploy
+
+### Migrations
+
+1. Open `server` folder.
+2. Run DB migrations by `./gradlew update` (you can override `dev.properties` value with `"-Pdb.h2.address=URL"`).
+
+- Run `./gradlew dropAll` to drop all DB entities.
+- Run `./gradlew dropAll update` to remove all records from DB.
+
+### Deploy with Gradle
+
+1. Open `server` folder.
+2. Run `./gradlew bootRun` (you can override values from `dev.properties` with `--args="--KEY=VALUE..."`).
+
+### Deploy from JAR
+
+Run `java -jar server.jar` (you can override values from `dev.properties` with `--KEY=VALUE...`).
